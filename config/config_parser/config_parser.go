@@ -65,6 +65,9 @@ func ParseConfig(gitcmd git.GitInterface) *config.Config {
 }
 
 func CheckConfig(cfg *config.Config) error {
+        // Undo c43d4c1605896dcfa998e2c871dfc3e13a3ee7b8 .
+	return nil
+
 	if strings.Contains(cfg.Repo.GitHubBranch, "/") {
 		return errors.New("Remote branch name must not contain backslashes '/'")
 	}
