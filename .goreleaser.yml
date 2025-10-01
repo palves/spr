@@ -13,7 +13,9 @@ builds:
       - windows
       - darwin
     ldflags:
-      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.CommitDate}} -X main.builtBy=gorelease
+#      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.CommitDate}} -X main.builtBy=gorelease
+      - -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.CommitDate}} -X main.builtBy=gorelease
+    flags: []
   - main: ./cmd/amend
     id: amend
     binary: git-amend
