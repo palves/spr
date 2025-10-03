@@ -559,11 +559,45 @@ func (c *client) UpdatePullRequest(ctx context.Context, gitcmd git.GitInterface,
 			log.Fatal().Err(err).Msg("failed to insert body into PR template")
 		}
 	}
-	title := &commit.Subject
+
+	// Compute PR stack index for N/M prefix.
+	total := len(pullRequests)
+	title := commit.Subject
+	if total > 1 {
+		idx := -1
+		for i, p := range pullRequests {
+			if p.ID == pr.ID {
+				idx = i
+				break
+			}
+		}
+
+		// Try to get series prefix from branch description.
+		seriesPrefix := ""
+
+		branch := git.GetLocalBranchName(gitcmd)
+		var output string
+		err := gitcmd.Git(fmt.Sprintf("config branch.%s.description", branch), &output)
+		if err == nil {
+			lines := strings.SplitN(strings.TrimSpace(output), "\n", 2)
+			if len(lines) > 0 && lines[0] != "" {
+				seriesPrefix = lines[0]
+			}
+		}
+
+		// Build title with [N/M] and optional series prefix.
+		if idx >= 0 {
+		    if seriesPrefix != "" {
+			    title = fmt.Sprintf("[%s %d/%d] %s", seriesPrefix, idx+1, total, commit.Subject)
+		    } else {
+			    title = fmt.Sprintf("[%d/%d] %s", idx+1, total, commit.Subject)
+		    }
+		}
+	}
 
 	input := genclient.UpdatePullRequestInput{
 		PullRequestId: pr.ID,
-		Title:         title,
+		Title:         &title,
 		Body:          &body,
 	}
 
