@@ -23,6 +23,8 @@ type RepoConfig struct {
 	GitHubRemote string `default:"origin" yaml:"githubRemote"`
 	GitHubBranch string `default:"main" yaml:"githubBranch"`
 
+	SprBranch string `default:"spr" yaml:"sprBranch"`
+
 	RequireChecks   bool `default:"true" yaml:"requireChecks"`
 	RequireApproval bool `default:"true" yaml:"requireApproval"`
 

@@ -504,7 +504,9 @@ func (sd *stackediff) fetchAndGetGitHubInfo(ctx context.Context) *github.GitHubI
 		return nil
 	}
 	info := sd.github.GetInfo(ctx, sd.gitcmd)
-	if git.BranchNameRegex.FindString(info.LocalBranch) != "" {
+
+	_, _, ok := git.ParseBranchName(sd.config.Repo.SprBranch, info.LocalBranch)
+	if ok {
 		fmt.Printf("error: don't run spr in a remote pr branch\n")
 		fmt.Printf(" this could lead to weird duplicate pull requests getting created\n")
 		fmt.Printf(" in general there is no need to checkout remote branches used for prs\n")

@@ -261,11 +261,11 @@ func matchPullRequestStack(
 			InQueue:    node.MergeQueueEntry != nil,
 		}
 
-		matches := git.BranchNameRegex.FindStringSubmatch(node.HeadRefName)
-		if matches != nil {
+		_, commitID, ok := git.ParseBranchName(repoConfig.SprBranch, node.HeadRefName)
+		if ok {
 			commit := (*node.Commits.Nodes)[len(*node.Commits.Nodes)-1].Commit
 			pullRequest.Commit = git.Commit{
-				CommitID:   matches[2],
+				CommitID:   commitID,
 				CommitHash: commit.Oid,
 				Subject:    commit.MessageHeadline,
 				Body:       commit.MessageBody,
@@ -322,11 +322,10 @@ func matchPullRequestStack(
 			break
 		}
 
-		matches := git.BranchNameRegex.FindStringSubmatch(currpr.ToBranch)
-		if matches == nil {
+		_, nextCommitID, ok := git.ParseBranchName(repoConfig.SprBranch, currpr.ToBranch)
+		if !ok {
 			panic(fmt.Errorf("invalid base branch for pull request #%d: %s", currpr.Number, currpr.ToBranch))
 		}
-		nextCommitID := matches[2]
 
 		currpr = pullRequestMap[nextCommitID]
 	}

@@ -12,12 +12,12 @@ func TestBranchNameRegex(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		matches := BranchNameRegex.FindStringSubmatch(tc.input)
-		if tc.branch != matches[1] {
-			t.Fatalf("expected: '%v', actual: '%v'", tc.branch, matches[1])
+		branch, commitID, ok := git.ParseBranchName("spr", tc.input)
+		if ok {
+			t.Fatalf("expected: '%v', actual: '%v'", tc.branch, branch)
 		}
 		if tc.commit != matches[2] {
-			t.Fatalf("expected: '%v', actual: '%v'", tc.commit, matches[2])
+			t.Fatalf("expected: '%v', actual: '%v'", tc.commit, commitID)
 		}
 	}
 }
